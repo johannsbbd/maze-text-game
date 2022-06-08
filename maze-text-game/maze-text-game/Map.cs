@@ -4,7 +4,16 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace maze_text_game {
+    public struct Point
+    {
+        public int x;
+        public int y;
 
+        public Point(int x, int y){
+            this.x = x;
+            this.y = y;
+        }
+    }
     public class Map {
         private char [,] blocks;
 
@@ -31,7 +40,7 @@ namespace maze_text_game {
 
             foreach (Point p in this.startPoints)
             {
-                this.blocks[p.x,p.y] = (char) BlockType.startPoint;
+                this.blocks[p.x,p.y] = 'S';
             }
 
         }
@@ -40,7 +49,7 @@ namespace maze_text_game {
             char [,] outMap = this.blocks;
             foreach (Point p in this.startPoints)
             {
-               outMap[p.x,p.y] = (char) BlockType.startPoint;
+               outMap[p.x,p.y] = 'S';
             }
             return outMap;
         }
@@ -58,7 +67,7 @@ namespace maze_text_game {
             var rand = new Random(CurrentSeed);
             for (int k = 0; k < this.blocks.GetLength(0); k++) {
                 for (int l = 0; l < this.blocks.GetLength(1); l++) {
-                    this.blocks[k, l] = (char) BlockType.wall;
+                    this.blocks[k, l] = '#';
                 }
             }
             bool [,] visited = new bool[this.blocks.GetLength(0), this.blocks.GetLength(1)];
@@ -71,7 +80,7 @@ namespace maze_text_game {
             this.flag.y = y;
 
             visited[this.flag.x,this.flag.y] = true;
-            this.blocks[this.flag.x,this.flag.y] = (char) BlockType.flag;
+            this.blocks[this.flag.x,this.flag.y] = 'F';
             evalNeighbourhood(this.flag, ref choices, ref visited);
             
             while(choices.Count != 0) {
@@ -79,19 +88,19 @@ namespace maze_text_game {
                 Point p = choices[index];
                 visited[p.x,p.y] = true;
                 if (reviewPoint(p)) {
-                    this.blocks[p.x,p.y] = (char) BlockType.floor;
+                    this.blocks[p.x,p.y] = '.';
                     evalNeighbourhood(p, ref choices, ref visited);
                 }
                 Console.Clear();
                 choices.RemoveAt(index);
-
+                /*
                 for (int k = 0; k < this.blocks.GetLength(0); k++) {
                     for (int l = 0; l < this.blocks.GetLength(1); l++) {
                         Console.Write(this.blocks[k, l]);
                     }
                     Console.WriteLine();
-                }
-                System.Threading.Thread.Sleep(100);
+                }System.Threading.Thread.Sleep(100);
+                */
             }
         }
 
@@ -129,7 +138,7 @@ namespace maze_text_game {
                     int yn = p.y+j;
                     yn = Math.Max(yn, 0);
                     yn = Math.Min(yn, this.blocks.GetLength(1) -1);
-                    if (this.blocks[xn, yn] == (char) BlockType.floor || this.blocks[xn, yn] == (char) BlockType.flag) {
+                    if (this.blocks[xn, yn] == '.' || this.blocks[xn, yn] == 'F') {
                         if (count == 1) {
                             return false;
                         }
@@ -194,7 +203,7 @@ namespace maze_text_game {
                         continue;
                     }
 
-                    if (distanceMatrix[pn.x,pn.y] == 0 && this.blocks[pn.x,pn.y] == (char) BlockType.floor) {
+                    if (distanceMatrix[pn.x,pn.y] == 0 && this.blocks[pn.x,pn.y] == '.') {
                         distanceMatrix[pn.x,pn.y] = distanceMatrix[p.x,p.y]+1;
                         nextPoints.Add(pn);
                     }
