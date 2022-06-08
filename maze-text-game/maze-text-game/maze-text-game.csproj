@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <RootNamespace>maze_text_game</RootNamespace>
     <UserSecretsId>2d5de763-8931-4ff5-ab36-6ec77c83193a</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
