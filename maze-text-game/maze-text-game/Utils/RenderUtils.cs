@@ -18,7 +18,7 @@ namespace maze_text_game.Utils
             return null;
         }
 
-        public static string renderMap(Game game)
+        public static string RenderMap(Game game)
         {
             int height = game.Map.MapSize.Height;
             int width = game.Map.MapSize.Width;
