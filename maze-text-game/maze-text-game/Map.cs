@@ -16,8 +16,8 @@ namespace maze_text_game {
 
         private bool[,] fogMap;
 
-        public Map(string GameSeed, int height, int width, int revealRadius) {
-            int CurrentSeed = GameSeed.GetHashCode();
+        public Map(int height, int width, int revealRadius = 2, string GameSeed = null) {
+            int? CurrentSeed = GameSeed.GetHashCode();
             this.revealRadius = revealRadius;
             this.blocks = new char[height, width];
             this.fogMap = new bool[height, width];
@@ -54,8 +54,8 @@ namespace maze_text_game {
             return this.initialDistanceToFlag;
         }
 
-        private void generateMap(int CurrentSeed) {
-            var rand = new Random(CurrentSeed);
+        private void generateMap(int? CurrentSeed) {
+            Random rand = CurrentSeed == null ? new Random() : new Random(CurrentSeed ?? 0);
             for (int k = 0; k < this.blocks.GetLength(0); k++) {
                 for (int l = 0; l < this.blocks.GetLength(1); l++) {
                     this.blocks[k, l] = (char) BlockType.wall;
