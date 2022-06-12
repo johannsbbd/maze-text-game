@@ -20,7 +20,7 @@ namespace maze_text_game {
         private bool[,] fogMap;
 
         public Map(int height, int width, int revealRadius = 2, string GameSeed = null) {
-            int? CurrentSeed = GameSeed.GetHashCode();
+            int? CurrentSeed = GameSeed?.GetHashCode();
             this.revealRadius = revealRadius;
             this.MapSize = new Size(width, height);
             this.blocks = new BlockType[height, width];
