@@ -29,12 +29,31 @@ namespace maze_text_game
             this.playerPositions = new Dictionary<string, Point>();
         }
 
-        public void AddPlayer(string playerSessionId, Player player) { 
+        public void AddPlayer(string playerSessionId, Player player) {
+            if (players.ContainsKey(playerSessionId)) {
+                throw new GameException("Player is already in the game.");
+            }
+
+            if (players.Count == playerLimit) {
+                throw new GameException("Game is full.");
+            }
+
+            List<Point> startPoints = this.map.getStartPoints();
+            if (startPoints.Count == 0) {
+                throw new GameException("Map contains no starting points.");
+            }
             
+            playerPositions.Add(playerSessionId, startPoints[players.Count % startPoints.Count]);
+            players.Add(playerSessionId, player);
         }
 
-        public void RemovePlayer(string playerSessionId) { 
-        
+        public void RemovePlayer(string playerSessionId) {
+            if (!players.ContainsKey(playerSessionId)) {
+                throw new GameException("Player is not in the game.");
+            }
+
+            players.Remove(playerSessionId);
+            playerPositions.Remove(playerSessionId);
         }
 
         public void MovePlayer(Direction direction, string playerSessionId) {
