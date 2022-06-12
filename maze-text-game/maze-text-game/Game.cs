@@ -21,8 +21,28 @@ namespace maze_text_game
             this.playerPositions = new Dictionary<string, Point>();
         }
 
-        public bool MovePlayer(Direction direction, string playerSessionId) {
-            return false;
+        public void MovePlayer(Direction direction, string playerSessionId) {
+            Point movement;
+            switch (direction) {
+                case Direction.North: movement = new Point(0, 1); break;
+                case Direction.South: movement = new Point(0, -1); break;
+                case Direction.East: movement = new Point(1, 0); break;
+                case Direction.West: movement = new Point(-1, 0); break;
+                default: movement = new Point(0, 0); break;
+            }
+
+            var playerPosition = this.playerPositions[playerSessionId];
+            var newPosition = new Point(playerPosition.x + movement.x, playerPosition.y + movement.y);
+
+            if (newPosition.x >= this.map.MapSize.Width || newPosition.y >= this.map.MapSize.Height) {
+                throw new PlayerMoveException("Player cannot move outside of map bounds.");
+            }
+
+            if (this.map.getMap()[newPosition.x, newPosition.y] == BlockType.wall) {
+                throw new PlayerMoveException("Player cannot walk through wall");
+            }
+
+            this.playerPositions[playerSessionId] = newPosition;
         }
     }
 
@@ -37,5 +57,9 @@ namespace maze_text_game
         Waiting,
         InProgress,
         Ended,
+    }
+
+    public class PlayerMoveException : Exception {
+        public PlayerMoveException(string message) : base(message) { }
     }
 }

@@ -1,12 +1,15 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 
 namespace maze_text_game {
 
     public class Map {
-        private char [,] blocks;
+        private BlockType [,] blocks;
+
+        public Size MapSize { get; private set; }
 
         private List<Point> startPoints;
         private Point flag = new Point();
@@ -19,7 +22,8 @@ namespace maze_text_game {
         public Map(int height, int width, int revealRadius = 2, string GameSeed = null) {
             int? CurrentSeed = GameSeed.GetHashCode();
             this.revealRadius = revealRadius;
-            this.blocks = new char[height, width];
+            this.MapSize = new Size(width, height);
+            this.blocks = new BlockType[height, width];
             this.fogMap = new bool[height, width];
             generateMap(CurrentSeed);
 
@@ -31,16 +35,16 @@ namespace maze_text_game {
 
             foreach (Point p in this.startPoints)
             {
-                this.blocks[p.x,p.y] = (char) BlockType.startPoint;
+                this.blocks[p.x,p.y] = BlockType.startPoint;
             }
 
         }
 
-        public char[,] getMap(){
-            char [,] outMap = this.blocks;
+        public BlockType[,] getMap() {
+            BlockType[,] outMap = this.blocks;
             foreach (Point p in this.startPoints)
             {
-               outMap[p.x,p.y] = (char) BlockType.startPoint;
+               outMap[p.x,p.y] = BlockType.startPoint;
             }
             return outMap;
         }
@@ -58,7 +62,7 @@ namespace maze_text_game {
             Random rand = CurrentSeed == null ? new Random() : new Random(CurrentSeed ?? 0);
             for (int k = 0; k < this.blocks.GetLength(0); k++) {
                 for (int l = 0; l < this.blocks.GetLength(1); l++) {
-                    this.blocks[k, l] = (char) BlockType.wall;
+                    this.blocks[k, l] = BlockType.wall;
                 }
             }
             bool [,] visited = new bool[this.blocks.GetLength(0), this.blocks.GetLength(1)];
@@ -71,7 +75,7 @@ namespace maze_text_game {
             this.flag.y = y;
 
             visited[this.flag.x,this.flag.y] = true;
-            this.blocks[this.flag.x,this.flag.y] = (char) BlockType.flag;
+            this.blocks[this.flag.x,this.flag.y] = BlockType.flag;
             evalNeighbourhood(this.flag, ref choices, ref visited);
             
             while(choices.Count != 0) {
@@ -79,7 +83,7 @@ namespace maze_text_game {
                 Point p = choices[index];
                 visited[p.x,p.y] = true;
                 if (reviewPoint(p)) {
-                    this.blocks[p.x,p.y] = (char) BlockType.floor;
+                    this.blocks[p.x,p.y] = BlockType.floor;
                     evalNeighbourhood(p, ref choices, ref visited);
                 }
                 choices.RemoveAt(index);
@@ -120,7 +124,7 @@ namespace maze_text_game {
                     int yn = p.y+j;
                     yn = Math.Max(yn, 0);
                     yn = Math.Min(yn, this.blocks.GetLength(1) -1);
-                    if (this.blocks[xn, yn] == (char) BlockType.floor || this.blocks[xn, yn] == (char) BlockType.flag) {
+                    if (this.blocks[xn, yn] == BlockType.floor || this.blocks[xn, yn] == BlockType.flag) {
                         if (count == 1) {
                             return false;
                         }
@@ -185,7 +189,7 @@ namespace maze_text_game {
                         continue;
                     }
 
-                    if (distanceMatrix[pn.x,pn.y] == 0 && this.blocks[pn.x,pn.y] == (char) BlockType.floor) {
+                    if (distanceMatrix[pn.x,pn.y] == 0 && this.blocks[pn.x,pn.y] == BlockType.floor) {
                         distanceMatrix[pn.x,pn.y] = distanceMatrix[p.x,p.y]+1;
                         nextPoints.Add(pn);
                     }
@@ -196,13 +200,6 @@ namespace maze_text_game {
                 getDistanceToflag(nextPoints[0], ref distanceMatrix);
                 nextPoints.RemoveAt(0);
             }
-        }
-    
-        public void movePlayer(int player, Point location){
-
-            // Should player positions be stored as simple Points in a Point dicitonary,
-            // Then to move a player, simply change that point indices
-            // Player positions should be stored in Game class i.e. Separation of concern
         }
 
         public void reveal(Point loc) {
