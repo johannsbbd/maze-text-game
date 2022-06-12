@@ -14,6 +14,14 @@ namespace maze_text_game
         private Dictionary<string, Point> playerPositions;
 
         public Game(int playerLimit, Size mapSize) {
+            if (playerLimit <= 0) {
+                throw new GameException("Player limit must be a positive integer.");
+            }
+
+            if (mapSize.Width <= 0 || mapSize.Height <= 0) {
+                throw new GameException("Map Dimensions must be positive integers.");
+            }
+
             this.playerLimit = playerLimit;
             this.SessionId = Guid.NewGuid().ToString();
             this.map = new Map(mapSize.Height, mapSize.Width);
@@ -21,7 +29,19 @@ namespace maze_text_game
             this.playerPositions = new Dictionary<string, Point>();
         }
 
+        public void AddPlayer(string playerSessionId, Player player) { 
+            
+        }
+
+        public void RemovePlayer(string playerSessionId) { 
+        
+        }
+
         public void MovePlayer(Direction direction, string playerSessionId) {
+            if (this.victoriousPlayer != null) {
+                throw new GameException("Game has ended.");
+            }
+
             Point movement;
             switch (direction) {
                 case Direction.North: movement = new Point(0, 1); break;
@@ -40,6 +60,10 @@ namespace maze_text_game
 
             if (this.map.getMap()[newPosition.x, newPosition.y] == BlockType.wall) {
                 throw new PlayerMoveException("Player cannot walk through wall");
+            }
+
+            if (this.map.getMap()[newPosition.x, newPosition.y] == BlockType.flag) {
+                this.victoriousPlayer = this.players[playerSessionId];
             }
 
             this.playerPositions[playerSessionId] = newPosition;
