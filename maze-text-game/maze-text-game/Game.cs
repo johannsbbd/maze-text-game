@@ -1,17 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 
 namespace maze_text_game
 {
     public class Game
     {
         public string SessionId { get; private set; }
-        private Map map;
-        private int playerLimit;
-        private Dictionary<string, Player> players;
-        private Player victoriousPlayer = null;
-        private Dictionary<string, Point> playerPositions;
+        public Map Map { get; private set; }
+        public int PlayerLimit { get; private set; }
+        public Dictionary<string, Player> Players { get; private set; }
+        public Player VictoriousPlayer { get; private set; } = null;
+        public Dictionary<string, Point> PlayerPositions { get; private set; }
+        public State GameState { get; private set; }
 
         public Game(int playerLimit, Size mapSize) {
             if (playerLimit <= 0) {
@@ -22,70 +24,100 @@ namespace maze_text_game
                 throw new GameException("Map Dimensions must be positive integers.");
             }
 
-            this.playerLimit = playerLimit;
+            this.PlayerLimit = playerLimit;
             this.SessionId = Guid.NewGuid().ToString();
-            this.map = new Map(mapSize.Height, mapSize.Width);
-            this.players = new Dictionary<string, Player>();
-            this.playerPositions = new Dictionary<string, Point>();
+            this.Map = new Map(mapSize.Height, mapSize.Width);
+            this.Players = new Dictionary<string, Player>();
+            this.PlayerPositions = new Dictionary<string, Point>();
+            this.GameState = State.Waiting;
         }
 
         public void AddPlayer(string playerSessionId, Player player) {
-            if (players.ContainsKey(playerSessionId)) {
+            if (Players.ContainsKey(playerSessionId)) {
                 throw new GameException("Player is already in the game.");
             }
 
-            if (players.Count == playerLimit) {
+            if (Players.Count == PlayerLimit) {
                 throw new GameException("Game is full.");
             }
 
-            List<Point> startPoints = this.map.getStartPoints();
+            if (this.GameState == State.InProgress) {
+                throw new GameException("Game is already in progress.");
+            }
+
+            List<Point> startPoints = this.Map.getStartPoints();
             if (startPoints.Count == 0) {
                 throw new GameException("Map contains no starting points.");
             }
             
-            playerPositions.Add(playerSessionId, startPoints[players.Count % startPoints.Count]);
-            players.Add(playerSessionId, player);
+            PlayerPositions.Add(playerSessionId, startPoints[Players.Count % startPoints.Count]);
+            Players.Add(playerSessionId, player);
+        }
+
+        public void VoteStart(string playerSessionId) {
+            if (Players[playerSessionId].HasVoted) {
+                throw new GameException("Player has already voted.");
+            }
+
+            Players[playerSessionId].HasVoted = true;
+
+            if (Players.Count == PlayerLimit) {
+                bool ready = true;
+                foreach (Player player in Players.Values) {
+                    ready &= player.HasVoted;
+                }
+
+                if (ready) {
+                    this.GameState = State.InProgress;
+                }
+            }
         }
 
         public void RemovePlayer(string playerSessionId) {
-            if (!players.ContainsKey(playerSessionId)) {
+            if (!Players.ContainsKey(playerSessionId)) {
                 throw new GameException("Player is not in the game.");
             }
 
-            players.Remove(playerSessionId);
-            playerPositions.Remove(playerSessionId);
+            Players.Remove(playerSessionId);
+            PlayerPositions.Remove(playerSessionId);
+
+            if (Players.Count == 1) {
+                this.VictoriousPlayer = Players.Values.First();
+                this.GameState = State.Ended;
+            }
         }
 
         public void MovePlayer(Direction direction, string playerSessionId) {
-            if (this.victoriousPlayer != null) {
+            if (this.VictoriousPlayer != null) {
                 throw new GameException("Game has ended.");
             }
 
             Point movement;
             switch (direction) {
-                case Direction.North: movement = new Point(0, 1); break;
-                case Direction.South: movement = new Point(0, -1); break;
+                case Direction.North: movement = new Point(0, -1); break;
+                case Direction.South: movement = new Point(0, 1); break;
                 case Direction.East: movement = new Point(1, 0); break;
                 case Direction.West: movement = new Point(-1, 0); break;
                 default: movement = new Point(0, 0); break;
             }
 
-            var playerPosition = this.playerPositions[playerSessionId];
+            var playerPosition = this.PlayerPositions[playerSessionId];
             var newPosition = new Point(playerPosition.x + movement.x, playerPosition.y + movement.y);
 
-            if (newPosition.x >= this.map.MapSize.Width || newPosition.y >= this.map.MapSize.Height) {
+            if (newPosition.x >= this.Map.MapSize.Width || newPosition.y >= this.Map.MapSize.Height) {
                 throw new PlayerMoveException("Player cannot move outside of map bounds.");
             }
 
-            if (this.map.getMap()[newPosition.x, newPosition.y] == BlockType.wall) {
+            if (this.Map.getMap()[newPosition.x, newPosition.y] == BlockType.wall) {
                 throw new PlayerMoveException("Player cannot walk through wall");
             }
 
-            if (this.map.getMap()[newPosition.x, newPosition.y] == BlockType.flag) {
-                this.victoriousPlayer = this.players[playerSessionId];
+            if (this.Map.getMap()[newPosition.x, newPosition.y] == BlockType.flag) {
+                this.VictoriousPlayer = this.Players[playerSessionId];
+                this.GameState = State.Ended;
             }
 
-            this.playerPositions[playerSessionId] = newPosition;
+            this.PlayerPositions[playerSessionId] = newPosition;
         }
     }
 
