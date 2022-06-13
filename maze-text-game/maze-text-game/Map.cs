@@ -64,8 +64,8 @@ namespace maze_text_game {
             bool [,] visited = new bool[this.blocks.GetLength(0), this.blocks.GetLength(1)];
             List<Point> choices = new List<Point>();
 
-            int x = (int) rand.NextDouble()*this.blocks.GetLength(0);
-            int y = (int) rand.NextDouble()*this.blocks.GetLength(1);
+            int x = (int) (rand.NextDouble()*this.blocks.GetLength(0));
+            int y = (int) (rand.NextDouble()*this.blocks.GetLength(1));
 
             this.flag.x = x;
             this.flag.y = y;
@@ -75,7 +75,7 @@ namespace maze_text_game {
             evalNeighbourhood(this.flag, ref choices, ref visited);
             
             while(choices.Count != 0) {
-                int index = (int) rand.NextDouble() *choices.Count;
+                int index = (int) (rand.NextDouble()*choices.Count);
                 Point p = choices[index];
                 visited[p.x,p.y] = true;
                 if (reviewPoint(p)) {
