@@ -11,7 +11,7 @@ namespace maze_text_game.Utils
 
         public static string LogError(ILogger logger, Exception ex)
         {
-            Guid errorId = new Guid();
+            Guid errorId = Guid.NewGuid();
 
             logger.LogError("ErrorId: " + errorId);
             logger.LogError("ErrorMessage: " + ex.Message);

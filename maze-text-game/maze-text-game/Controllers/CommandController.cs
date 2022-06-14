@@ -5,18 +5,25 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
-using static maze_text_game.Games.GamesSingleton;
+using maze_text_game.Games;
+using maze_text_game.Filters;
 
 namespace maze_text_game.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [AuthFilter]
     public class CommandController : Controller
     {
 
-        private ConcurrentDictionary<string, Game> _games = Games.GamesSingleton.Instance;
+        private ConcurrentDictionary<string, Game> _games = GamesSingleton.Instance;
 
         private readonly ILogger<CommandController> _logger;
+
+        public CommandController(ILogger<CommandController> logger)
+        {
+            _logger = logger;
+        }
 
         [HttpPost]
         public ActionResult ActionCommand(CommandReqDTO dto)
@@ -37,10 +44,8 @@ namespace maze_text_game.Controllers
 
                 //Get player details from headers, attached by AuthFilter
                 string playerGuid = Request.Headers["PlayerGuid"];
-                string playerName = Request.Headers["PlayerName"];
 
                 //Move player
-
                 if (!string.IsNullOrEmpty(dto.Command))
                 {
                     string direction = dto.Command;
@@ -73,7 +78,7 @@ namespace maze_text_game.Controllers
                 }
                 
                 //Return Ok
-                return new OkResult();
+                return Ok();
             }
             catch (GameException ex)
             {
