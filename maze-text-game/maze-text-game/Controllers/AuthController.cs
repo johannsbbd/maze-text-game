@@ -18,8 +18,8 @@ namespace maze_text_game.Controllers
     [Route("[controller]")]
     public class AuthController : ControllerBase
     {
-        private readonly ILogger<GameController> _logger;
-        public AuthController(ILogger<GameController> logger)
+        private readonly ILogger<AuthController> _logger;
+        public AuthController(ILogger<AuthController> logger)
         {
             _logger = logger;
         }
@@ -39,7 +39,7 @@ namespace maze_text_game.Controllers
             {
                 string errorId = LogUtils.LogError(_logger, ex);
                 ModelState.AddModelError("error", "Internal server error in AuthUser: ErrorId=" + errorId);
-                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+                return StatusCode(StatusCodes.Status500InternalServerError, ModelState);
             }
         }       
     }

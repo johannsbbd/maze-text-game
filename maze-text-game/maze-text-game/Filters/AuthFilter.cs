@@ -22,17 +22,17 @@ namespace maze_text_game.Filters
             if (!tokenHeader.StartsWith("Bearer "))
             {
                 context.ModelState.AddModelError("Authorization", "Invalid Authorization Header. Please specify Authorization: Bearer <JWT>");
-                context.Result = new BadRequestResult();
+                context.Result = new BadRequestObjectResult(context.ModelState);
                 return;
             }
 
-            //Get the JWT token - we skip "Bearer " (8 chars) in the tokenHeader string
-            string token = tokenHeader.Substring(8);
+            //Get the JWT token - we skip "Bearer " (7 chars) in the tokenHeader string
+            string token = tokenHeader.Substring(7);
 
             if (!JWTUtils.VerifyToken(token))
             {
                 context.ModelState.AddModelError("Authorization", "Invalid JWT Token.");
-                context.Result = new UnauthorizedResult();
+                context.Result = new UnauthorizedObjectResult(context.ModelState);
                 return;
             }
 
