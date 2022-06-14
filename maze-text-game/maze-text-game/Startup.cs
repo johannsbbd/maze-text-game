@@ -46,6 +46,8 @@ namespace maze_text_game
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "maze_text_game", Version = "v1" });
                 c.OperationFilter<AddAuthHeaderParameter>();
             });
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
