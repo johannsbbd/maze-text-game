@@ -62,7 +62,7 @@ namespace maze_text_game.Controllers
                             directionEnumValue = Direction.South;
                             break;
                         case "east":
-                            directionEnumValue = Direction.South;
+                            directionEnumValue = Direction.East;
                             break;
                         default:
                             ModelState.AddModelError("error", "Invalid command");
@@ -89,6 +89,8 @@ namespace maze_text_game.Controllers
             {
                 string errorId = LogUtils.LogError(_logger, ex);
                 ModelState.AddModelError("error", "Internal server error in Command: ErrorId=" + errorId);
+                ModelState.AddModelError("real_error", ex.Message);
+                ModelState.AddModelError("stack_trace", ex.StackTrace);
                 return StatusCode(StatusCodes.Status500InternalServerError, ModelState);
             }
         }

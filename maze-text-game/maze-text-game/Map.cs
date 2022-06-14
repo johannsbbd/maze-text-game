@@ -33,19 +33,10 @@ namespace maze_text_game {
 
             this.startPoints = getStartPoints(ref distanceMatrix);
 
-            foreach (Point p in this.startPoints)
-            {
-                this.blocks[p.x,p.y] = BlockType.startPoint;
-            }
-
         }
 
         public BlockType[,] getMap() {
             BlockType[,] outMap = this.blocks;
-            foreach (Point p in this.startPoints)
-            {
-               outMap[p.x,p.y] = BlockType.startPoint;
-            }
             return outMap;
         }
         public List<Point> getStartPoints(){

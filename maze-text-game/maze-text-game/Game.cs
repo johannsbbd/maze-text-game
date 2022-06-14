@@ -139,7 +139,7 @@ namespace maze_text_game
         Ended,
     }
 
-    public class PlayerMoveException : Exception {
+    public class PlayerMoveException : GameException {
         public PlayerMoveException(string message) : base(message) { }
     }
 

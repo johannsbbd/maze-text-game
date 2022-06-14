@@ -29,6 +29,9 @@ namespace maze_text_game.Utils
             {
                 for (int x = 0; x < width; x++)
                 {
+                    //Spacer
+                    res += " ";
+
                     //Show player
                     char? playerChar = getPlayerAt(x, y, game);
                     if (playerChar != null)
@@ -44,7 +47,7 @@ namespace maze_text_game.Utils
                         continue;
                     }
 
-                    res += (char)game.Map.getMap()[y, x];
+                    res += (char)game.Map.getMap()[x, y];
                 }
 
                 res += "\n";
