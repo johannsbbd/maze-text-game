@@ -14,7 +14,7 @@ namespace console_client
 
         static Thread renderThread = new Thread(() => {
             while (currentGameId != null) {
-                Thread.Sleep(5000);
+                Thread.Sleep(1000);
                 RenderActiveGame();
             }
         });
@@ -29,7 +29,10 @@ namespace console_client
 
             Console.WriteLine(currentGameId);
             Console.WriteLine(game.GameState);
-            Console.WriteLine($"Player {game.WinningPlayer} has won!");
+
+            if (game.WinningPlayer != "") {
+                Console.WriteLine($"Player {game.WinningPlayer} has won!");
+            }            
             Console.WriteLine(game.RenderedMap);
         }
 
@@ -57,10 +60,10 @@ namespace console_client
                         Console.WriteLine("Failed to create game.");
                         continue;
                     }
-
-                    Console.WriteLine($"Game with Id: '{guid}' created.\nType 'vote' to start the game.");
+                    
                     currentGameId = guid;
                     RenderActiveGame();
+                    Console.WriteLine($"Game with Id: '{guid}' created.\nType 'vote' to start the game.");
                     continue;
                 }
 
@@ -74,14 +77,14 @@ namespace console_client
 
                     string gameId = tokens[1];
 
-                    if (Api.JoinGame(gameId)) {
-                        Console.WriteLine("Game joined. Type 'vote' to start the game.");
-                    } else {
+                    if (!Api.JoinGame(gameId)) {
                         Console.WriteLine("Could not join game");
+                        continue;
                     }
 
                     currentGameId = gameId;
                     RenderActiveGame();
+                    Console.WriteLine("Game joined. Type 'vote' to start the game.");
                     continue;
                 }
 
@@ -115,6 +118,7 @@ namespace console_client
                     }
                     else {
                         Console.WriteLine("Vote failed");
+                        continue;
                     }
 
                     RenderActiveGame();
@@ -159,7 +163,6 @@ namespace console_client
 
                 if (command != "") {
                     Api.RunCommand(currentGameId, command);
-                    RenderActiveGame();
                 }
             }
         }
