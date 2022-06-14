@@ -16,10 +16,9 @@ namespace maze_text_game.Controllers
 
         private ConcurrentDictionary<string, Game> _games = Games.GamesSingleton.Instance;
 
-        private readonly ILogger<GameController> _logger;
+        private readonly ILogger<CommandController> _logger;
 
         [HttpPost]
-        [Route("/command")]
         public ActionResult ActionCommand(CommandReqDTO dto)
         {
             try
@@ -46,7 +45,7 @@ namespace maze_text_game.Controllers
                 {
                     string direction = dto.Command;
                     Direction directionEnumValue;
-                    switch (direction.ToLower()) 
+                    switch (direction.ToLower())
                     {
                         case "north":
                             directionEnumValue = Direction.North;
@@ -67,6 +66,11 @@ namespace maze_text_game.Controllers
 
                     game.MovePlayer(directionEnumValue, playerGuid);
                 }
+                else 
+                {
+                    ModelState.AddModelError("error", "Invalid command");
+                    return BadRequest(ModelState);
+                }
                 
                 //Return Ok
                 return new OkResult();
@@ -79,8 +83,8 @@ namespace maze_text_game.Controllers
             catch (Exception ex)
             {
                 string errorId = LogUtils.LogError(_logger, ex);
-                ModelState.AddModelError("error", "Internal server error in JoinGame: ErrorId=" + errorId);
-                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+                ModelState.AddModelError("error", "Internal server error in Command: ErrorId=" + errorId);
+                return StatusCode(StatusCodes.Status500InternalServerError, ModelState);
             }
         }
     }
