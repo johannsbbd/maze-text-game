@@ -11,6 +11,7 @@ using maze_text_game.Filters;
 using System.Drawing;
 using Microsoft.AspNetCore.Http;
 using System.Net.Http;
+using maze_text_game.Games;
 
 namespace maze_text_game.Controllers
 {
@@ -19,7 +20,7 @@ namespace maze_text_game.Controllers
     [AuthFilter]
     public class GameController : ControllerBase
     {
-        private static ConcurrentDictionary<string, Game> _games = new ConcurrentDictionary<string, Game>();
+        private static ConcurrentDictionary<string, Game> _games = GamesSingleton.Instance;
 
         private readonly ILogger<GameController> _logger;
 

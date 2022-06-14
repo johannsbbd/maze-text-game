@@ -21,6 +21,7 @@ namespace maze_text_game
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
+                    webBuilder.UseUrls("http://0.0.0.0:5000/");
                 });
     }
 }
