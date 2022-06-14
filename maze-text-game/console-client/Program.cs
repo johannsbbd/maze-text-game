@@ -9,6 +9,8 @@ namespace console_client
     {
 
         static string currentGameId = null;
+        static bool hasVoted = false;
+        static bool isListeningCommands = false;
 
         static Thread renderThread = new Thread(() => {
             while (currentGameId != null) {
@@ -20,7 +22,14 @@ namespace console_client
         static void RenderActiveGame() {
             Console.Clear();
             dynamic game = Api.GetGame(currentGameId);
+
+            if (!isListeningCommands && hasVoted) {
+                Console.WriteLine("Press enter to proceed");
+            }
+
+            Console.WriteLine(currentGameId);
             Console.WriteLine(game.GameState);
+            Console.WriteLine($"Player {game.WinningPlayer} has won!");
             Console.WriteLine(game.RenderedMap);
         }
 
@@ -49,7 +58,7 @@ namespace console_client
                         continue;
                     }
 
-                    Console.WriteLine(guid);
+                    Console.WriteLine($"Game with Id: '{guid}' created.\nType 'vote' to start the game.");
                     currentGameId = guid;
                     RenderActiveGame();
                     continue;
@@ -66,7 +75,7 @@ namespace console_client
                     string gameId = tokens[1];
 
                     if (Api.JoinGame(gameId)) {
-                        Console.WriteLine("Game joined");
+                        Console.WriteLine("Game joined. Type 'vote' to start the game.");
                     } else {
                         Console.WriteLine("Could not join game");
                     }
@@ -101,6 +110,7 @@ namespace console_client
 
                     if (Api.VoteStart(currentGameId))
                     {
+                        hasVoted = true;
                         Console.WriteLine("Vote successful");
                     }
                     else {
@@ -124,6 +134,8 @@ namespace console_client
                     continue;
                 }                
             }
+
+            isListeningCommands = true;
 
             while (!ended) {
 

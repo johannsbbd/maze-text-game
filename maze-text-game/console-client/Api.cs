@@ -12,7 +12,7 @@ namespace console_client
     internal class Api
     {
 
-        static string apiBase = "https://localhost:5001";
+        static string apiBase = "http://ec2-13-245-128-230.af-south-1.compute.amazonaws.com";
         
         static string token = null;
 
