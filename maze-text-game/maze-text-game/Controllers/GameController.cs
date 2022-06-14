@@ -19,7 +19,7 @@ namespace maze_text_game.Controllers
     [AuthFilter]
     public class GameController : ControllerBase
     {
-        private static ConcurrentDictionary<string, Game> _games = new ConcurrentDictionary<string, Game>();
+        private static ConcurrentDictionary<string, Game> _games = Games.GamesSingleton.Instance;
 
         private readonly ILogger<GameController> _logger;
 
