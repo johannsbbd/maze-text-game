@@ -154,6 +154,47 @@ namespace maze_text_game.Controllers
             }
         }
 
+        [HttpPost]
+        [Route("vote_start")]
+        public ActionResult VoteStartGame(GameReqDTO dto)
+        {
+            try
+            {
+                Game game = null;
+
+                //Find game
+                bool foundGame = _games.TryGetValue(dto.GameGuid, out game);
+
+                //We could not find the game
+                if (!foundGame)
+                {
+                    ModelState.AddModelError("GameGuid", "Could not find game with id: " + dto.GameGuid);
+                    return BadRequest(ModelState);
+                }
+
+                //Get player details from headers, attached by AuthFilter
+                string playerGuid = Request.Headers["PlayerGuid"];
+
+                //Join game as player
+                game.VoteStart(playerGuid);
+
+                //Return Ok
+                return Ok();
+            }
+            catch (GameException ex)
+            {
+                ModelState.AddModelError("error", ex.Message);
+                return BadRequest(ModelState);
+
+            }
+            catch (Exception ex)
+            {
+                string errorId = LogUtils.LogError(_logger, ex);
+                ModelState.AddModelError("error", "Internal server error in LeaveGame: ErrorId=" + errorId);
+                return StatusCode(StatusCodes.Status500InternalServerError, ModelState);
+            }
+        }
+
         [HttpGet]
         public ActionResult<GameResDTO> GetGame(string gameId)
         {
@@ -176,7 +217,8 @@ namespace maze_text_game.Controllers
                 {
                     RenderedMap = RenderUtils.RenderMap(game),
                     GameState = GameStateMapper.GameStateEnumMap(game.GameState),
-                    WinningPlayer = game.VictoriousPlayer?.Name ?? ""
+                    WinningPlayer = game.VictoriousPlayer?.Name ?? "",
+                    Players = game.Players.Values.ToArray()
                 };
 
                 //Return response

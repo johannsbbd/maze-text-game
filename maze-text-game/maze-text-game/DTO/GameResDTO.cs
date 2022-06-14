@@ -12,5 +12,7 @@ namespace maze_text_game.DTO
         public string GameState { get; init; }
 
         public string WinningPlayer { get; init; }
+
+        public Player[] Players { get; init; }
     }
 }
