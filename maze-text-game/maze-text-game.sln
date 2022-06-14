@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31605.320
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32328.378
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "maze-text-game", "maze-text-game\maze-text-game.csproj", "{CE334569-5382-47FF-9BD5-6AB51DDD9479}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "maze-text-game", "maze-text-game\maze-text-game.csproj", "{CE334569-5382-47FF-9BD5-6AB51DDD9479}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "console-client", "console-client\console-client.csproj", "{31B75EF3-6DC9-4D31-8DA4-4627AE275B4A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{CE334569-5382-47FF-9BD5-6AB51DDD9479}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CE334569-5382-47FF-9BD5-6AB51DDD9479}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CE334569-5382-47FF-9BD5-6AB51DDD9479}.Release|Any CPU.Build.0 = Release|Any CPU
+		{31B75EF3-6DC9-4D31-8DA4-4627AE275B4A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{31B75EF3-6DC9-4D31-8DA4-4627AE275B4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{31B75EF3-6DC9-4D31-8DA4-4627AE275B4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{31B75EF3-6DC9-4D31-8DA4-4627AE275B4A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
