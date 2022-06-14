@@ -19,6 +19,13 @@ namespace maze_text_game.Filters
         {
             string tokenHeader = context.HttpContext.Request.Headers["Authorization"];
 
+            if (tokenHeader == null)
+            {
+                context.ModelState.AddModelError("Authorization", "Invalid Authorization Header. Please specify Authorization: Bearer <JWT>");
+                context.Result = new BadRequestObjectResult(context.ModelState);
+                return;
+            }
+
             if (!tokenHeader.StartsWith("Bearer "))
             {
                 context.ModelState.AddModelError("Authorization", "Invalid Authorization Header. Please specify Authorization: Bearer <JWT>");

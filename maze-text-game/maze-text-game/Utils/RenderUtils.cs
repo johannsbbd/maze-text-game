@@ -29,10 +29,18 @@ namespace maze_text_game.Utils
             {
                 for (int x = 0; x < width; x++)
                 {
+                    //Show player
                     char? playerChar = getPlayerAt(x, y, game);
                     if (playerChar != null)
                     {
                         res += playerChar;
+                        continue;
+                    }
+
+                    //Show fog
+                    if (!game.Map.getFogMap()[x, y])
+                    {
+                        res += "?";
                         continue;
                     }
 

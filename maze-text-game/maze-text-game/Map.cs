@@ -204,14 +204,14 @@ namespace maze_text_game {
 
         public void reveal(Point loc) {
 
-            for (int i = -1; i < 2; i++)
+            for (int i = -revealRadius; i <= revealRadius; i++)
             {
-                for (int j = -1; j < 2; j++)
+                for (int j = -revealRadius; j <= revealRadius; j++)
                 {
                     int px = loc.x+i;
                     px = Math.Min(px, this.blocks.GetLength(0)-1);
                     px = Math.Max(px, 0);
-                    int py = loc.x+i;
+                    int py = loc.y+j;
                     py = Math.Min(py, this.blocks.GetLength(1)-1);
                     py = Math.Max(py, 0);
 

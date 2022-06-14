@@ -49,8 +49,12 @@ namespace maze_text_game
             if (startPoints.Count == 0) {
                 throw new GameException("Map contains no starting points.");
             }
-            
-            PlayerPositions.Add(playerSessionId, startPoints[Players.Count % startPoints.Count]);
+
+            var playerPos = startPoints[Players.Count % startPoints.Count];
+
+
+            PlayerPositions.Add(playerSessionId, playerPos);
+            this.Map.reveal(playerPos);
             Players.Add(playerSessionId, player);
         }
 
@@ -118,6 +122,7 @@ namespace maze_text_game
             }
 
             this.PlayerPositions[playerSessionId] = newPosition;
+            this.Map.reveal(newPosition);
         }
     }
 
