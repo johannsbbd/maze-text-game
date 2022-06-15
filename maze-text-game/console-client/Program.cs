@@ -11,9 +11,10 @@ namespace console_client
         static string currentGameId = null;
         static bool hasVoted = false;
         static bool isListeningCommands = false;
+        static bool ended = false;
 
         static Thread renderThread = new Thread(() => {
-            while (currentGameId != null) {
+            while (currentGameId != null && !ended) {
                 Thread.Sleep(1000);
                 RenderActiveGame();
             }
@@ -31,14 +32,14 @@ namespace console_client
             Console.WriteLine(game.GameState);
 
             if (game.WinningPlayer != "") {
+                ended = true;
                 Console.WriteLine($"Player {game.WinningPlayer} has won!");
             }            
             Console.WriteLine(game.RenderedMap);
         }
 
         static void Main(string[] args)
-        {
-            bool ended = false;
+        {            
 
             while (!ended) {
                 string input = Console.ReadLine();
